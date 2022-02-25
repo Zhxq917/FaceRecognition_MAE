@@ -18,6 +18,7 @@ from timm.models.vision_transformer import PatchEmbed, Block
 
 from util.pos_embed import get_2d_sincos_pos_embed
 
+import numpy as np
 
 class MaskedAutoencoderViT(nn.Module):
     """ Masked Autoencoder with VisionTransformer backbone
@@ -120,16 +121,67 @@ class MaskedAutoencoderViT(nn.Module):
         imgs = x.reshape(shape=(x.shape[0], 3, h * p, h * p))
         return imgs
 
+    # def random_masking(self, x, mask_ratio):
+    #     """
+    #     Perform per-sample random masking by per-sample shuffling.
+    #     Per-sample shuffling is done by argsort random noise.
+    #     x: [N, L, D], sequence
+    #     """
+    #     N, L, D = x.shape  # batch, length, dim
+    #     len_keep = int(L * (1 - mask_ratio))
+        
+    #     noise = torch.rand(N, L, device=x.device)  # noise in [0, 1]
+        
+    #     # sort noise for each sample
+    #     ids_shuffle = torch.argsort(noise, dim=1)  # ascend: small is keep, large is remove
+    #     ids_restore = torch.argsort(ids_shuffle, dim=1)
+
+    #     # keep the first subset
+    #     ids_keep = ids_shuffle[:, :len_keep]
+    #     x_masked = torch.gather(x, dim=1, index=ids_keep.unsqueeze(-1).repeat(1, 1, D))
+
+    #     # generate the binary mask: 0 is keep, 1 is remove
+    #     mask = torch.ones([N, L], device=x.device)
+    #     mask[:, :len_keep] = 0
+    #     # unshuffle to get the binary mask
+    #     mask = torch.gather(mask, dim=1, index=ids_restore)
+
+    #     return x_masked, mask, ids_restore
+
     def random_masking(self, x, mask_ratio):
         """
         Perform per-sample random masking by per-sample shuffling.
         Per-sample shuffling is done by argsort random noise.
         x: [N, L, D], sequence
+
+                          *** 571L ***
+        modified for a manual qualitative assessment of 
+        MAE performance with ImageNet-pretrained weights on
+        human facces, with the pixels for lower part being removed.     
+        
         """
         N, L, D = x.shape  # batch, length, dim
-        len_keep = int(L * (1 - mask_ratio))
         
-        noise = torch.rand(N, L, device=x.device)  # noise in [0, 1]
+        # 571L: specifiy the intervals of patches to remove here
+        # each arange corresponds to a row in the removed part  
+        indices_to_remove = [np.arange(115, 123), np.arange(129,137), np.arange(144,150), np.arange(159,164), np.arange(174,177)]
+        len_remove = np.sum([e.size for e in indices_to_remove])
+        
+        # 571L: for 224 x 224 image, kernel 16x16, stride 16x16
+        # the grids resulting from the downsampling have the size 14 by 14 
+        num_of_grids = 14*14  
+        len_keep_val = num_of_grids - len_remove
+        print('image_patch_ratio: {:0.2f}%'.format(100 * len_keep_val / num_of_grids))
+        
+        # 571L: no need to compute the ratio 
+        len_keep = len_keep_val # int(L * (1 - mask_ratio))
+
+        # 571L: mark the pacthes in the lower part specified above
+        # for removal; not stochastic any longer        
+        # noise = torch.rand(N, L, device=x.device)  # noise in [0, 1]
+        noise = torch.zeros((N, L), device=x.device)
+        for indices in indices_to_remove:
+          noise[:, indices] = 1.
         
         # sort noise for each sample
         ids_shuffle = torch.argsort(noise, dim=1)  # ascend: small is keep, large is remove
