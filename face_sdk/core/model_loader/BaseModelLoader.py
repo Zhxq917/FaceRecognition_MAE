@@ -6,9 +6,6 @@
 import os
 import sys
 sys.path.append('models/network_def')
-import logging.config
-logging.config.fileConfig("config/logging.conf")
-logger = logging.getLogger('sdk') 
 from abc import ABCMeta, abstractmethod
 
 import json
@@ -25,13 +22,13 @@ class BaseModelLoader(metaclass=ABCMeta):
         try:
             self.meta_conf = json.load(open(meta_file_path, 'r'))
         except IOError as e:
-            logger.error('The configuration file meta.json was not found or failed to parse the file!')
+            print('The configuration file meta.json was not found or failed to parse the file!')
             raise e
         except Exception as e:
-            logger.info('The configuration file format is wrong!')
+            print('The configuration file format is wrong!')
             raise e
         else:
-            logger.info('Successfully parsed the model configuration file meta.json!')
+            print('Successfully parsed the model configuration file meta.json!')
         # common configs for all model
         self.cfg['model_path'] = model_path
         self.cfg['model_category'] = model_category

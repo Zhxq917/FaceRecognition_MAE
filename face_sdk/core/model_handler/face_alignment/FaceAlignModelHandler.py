@@ -3,9 +3,6 @@
 @date: 20201023
 @contact: jun21wangustc@gmail.com 
 """
-import logging.config
-logging.config.fileConfig("config/logging.conf")
-logger = logging.getLogger('sdk')
 
 import cv2
 import torch
@@ -61,7 +58,7 @@ class FaceAlignModelHandler(BaseModelHandler):
            A torch tensor, the image after preprecess, shape: (3, 112, 112).
         """
         if not isinstance(image, np.ndarray):
-            logger.error('The input should be the ndarray read by cv2!')
+            print('The input should be the ndarray read by cv2!')
             raise InputError()
         img = image.copy()
         self.image_org = image.copy()
