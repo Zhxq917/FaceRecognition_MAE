@@ -15,7 +15,7 @@ from core.model_handler.face_detection.FaceDetModelHandler import FaceDetModelHa
 with open('config/model_conf.yaml') as f:
     model_conf = yaml.safe_load(f)
 
-def run(image_path:str):
+def run(image):
     # common setting for all model, need not modify.
     model_path = 'models'
 
@@ -46,7 +46,8 @@ def run(image_path:str):
 
     # read image
     # image_path = 'api_usage/test_images/test1.jpg'
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    # image = cv2.imread(image, cv2.IMREAD_COLOR)
+    image = cv2.cvtColor(np.array(image), cv2.IMREAD_COLOR)
     faceDetModelHandler = FaceDetModelHandler(model, 'cuda:0', cfg)
 
     try:

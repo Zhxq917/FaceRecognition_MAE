@@ -144,7 +144,10 @@ class FaceMasker:
                                 got to '/Data/mask-data' for all template.
             masked_face_path(str): the path to save masked image.
         """
-        image = imread(image_path)
+        if isinstance(image_path, str):
+            image = imread(image_path)
+        else:
+            image = np.array(image_path)
         ref_texture_src = self.template_name2ref_texture_src[template_name] 
         uv_mask_src = self.template_name2uv_mask_src[template_name]
         if image.ndim == 2:

@@ -15,7 +15,7 @@ from core.model_handler.face_alignment.FaceAlignModelHandler import FaceAlignMod
 with open('config/model_conf.yaml') as f:
     model_conf = yaml.safe_load(f)
 
-def run(image_path, detect_res):
+def run(image, detect_res):
     # common setting for all model, need not modify.
     model_path = 'models'
 
@@ -49,7 +49,8 @@ def run(image_path, detect_res):
     # read image
     # image_path = 'api_usage/test_images/test1.jpg'
     # image_det_txt_path = 'api_usage/test_images/test1_detect_res.txt'
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    # image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    image = cv2.cvtColor(np.array(image), cv2.IMREAD_COLOR)
     # with open(image_det_txt_path, 'r') as f:
         # lines = f.readlines()
     detect_res_lines = detect_res
