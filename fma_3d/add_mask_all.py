@@ -5,7 +5,7 @@
 """
 
 import os
-from face_masker import FaceMasker
+from fma_3d.face_masker import FaceMasker
 
 def get_lms_templateName(face_info_file, image_name2template_name_file, masked_face_root):
     """Generate to do task list.

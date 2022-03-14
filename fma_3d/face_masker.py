@@ -13,9 +13,9 @@ import torch
 import numpy as np
 from skimage.io import imread, imsave
 from skimage.transform import estimate_transform, warp
-from utils import read_info
-from model.prnet import PRNet
-from utils.cython.render import render_cy
+from fma_3d.utils import read_info
+from fma_3d.model.prnet import PRNet
+from fma_3d.utils.cython.render import render_cy
 
 class PRN:
     """Process of PRNet.
@@ -25,8 +25,8 @@ class PRN:
     def __init__(self, model_path):
         self.resolution = 256
         self.MaxPos = self.resolution*1.1        
-        self.face_ind = np.loadtxt('Data/uv-data/face_ind.txt').astype(np.int32)
-        self.triangles = np.loadtxt('Data/uv-data/triangles.txt').astype(np.int32)
+        self.face_ind = np.loadtxt('fma_3d/Data/uv-data/face_ind.txt').astype(np.int32)
+        self.triangles = np.loadtxt('fma_3d/Data/uv-data/triangles.txt').astype(np.int32)
         self.net = PRNet(3, 3)
         state_dict = torch.load(model_path)
         self.net.load_state_dict(state_dict)
@@ -95,9 +95,9 @@ class FaceMasker:
         Args:
             is_aug(bool): whether or not to add some augmentaion operation on the mask.
         """
-        self.uv_face_path = 'Data/uv-data/uv_face_mask.png'
-        self.mask_template_folder = 'Data/mask-data'
-        self.prn = PRN('model/prnet.pth')
+        self.uv_face_path = 'fma_3d/Data/uv-data/uv_face_mask.png'
+        self.mask_template_folder = 'fma_3d/Data/mask-data'
+        self.prn = PRN('fma_3d/model/prnet.pth')
         self.template_name2ref_texture_src, self.template_name2uv_mask_src = self.get_ref_texture_src()
         self.is_aug = is_aug
 
@@ -166,7 +166,8 @@ class FaceMasker:
         tmp = new_image * face_mask[:, :, np.newaxis]
         new_image = image * (1 - face_mask[:, :, np.newaxis]) + new_image * face_mask[:, :, np.newaxis]
         new_image = np.clip(new_image, -1, 1) #must clip to (-1, 1)!
-
+        if not masked_face_path:
+            return new_image
         imsave(masked_face_path, new_image) 
 
     def get_vertices(self, face_lms, image):
