@@ -15,12 +15,11 @@ from core.model_handler.face_alignment.FaceAlignModelHandler import FaceAlignMod
 with open('config/model_conf.yaml') as f:
     model_conf = yaml.safe_load(f)
 
-def run(image, detect_res):
+def run(image, detect_res, scene):
     # common setting for all model, need not modify.
     model_path = 'models'
 
     # model setting, modified along with model
-    scene = 'non-mask'
     model_category = 'face_alignment'
     model_name =  model_conf[scene][model_category]
 
