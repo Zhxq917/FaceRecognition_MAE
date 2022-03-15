@@ -47,6 +47,11 @@ def run(image):
     # read image
     # image_path = 'api_usage/test_images/test1.jpg'
     # image = cv2.imread(image, cv2.IMREAD_COLOR)
+    if type(image) is not np.ndarray:
+      image = np.array(image)
+    else:
+      img_float32 = np.float32(image)
+      image = cv2.cvtColor(img_float32, cv2.COLOR_RGB2HSV)
     image = cv2.cvtColor(np.array(image), cv2.IMREAD_COLOR)
     faceDetModelHandler = FaceDetModelHandler(model, 'cuda:0', cfg)
 

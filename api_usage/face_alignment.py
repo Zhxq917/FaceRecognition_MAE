@@ -50,6 +50,11 @@ def run(image, detect_res):
     # image_path = 'api_usage/test_images/test1.jpg'
     # image_det_txt_path = 'api_usage/test_images/test1_detect_res.txt'
     # image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    if type(image) is not np.ndarray:
+      image = np.array(image)
+    else:
+      img_float32 = np.float32(image)
+      image = cv2.cvtColor(img_float32, cv2.COLOR_RGB2HSV)
     image = cv2.cvtColor(np.array(image), cv2.IMREAD_COLOR)
     # with open(image_det_txt_path, 'r') as f:
         # lines = f.readlines()
