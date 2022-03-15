@@ -3,8 +3,7 @@ from fma_3d import add_mask_one
 from PIL import Image
 
 
-def run(image_path):
-    image = Image.open(image_path)
+def run(image):
 
     # detect
     detect_res = face_detect.run(image)
