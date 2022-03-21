@@ -65,7 +65,7 @@ def run(image, detect_res, scene):
             det = np.asarray(list(map(int, line[0:4])), dtype=np.int32)
             landmarks = faceAlignModelHandler.inference_on_image(image, det)
 
-            # save_path_img = 'api_usage/temp/test1_' + 'landmark_res' + str(i) + '.jpg'
+            save_path_img = 'api_usage/temp/test1_' + 'landmark_res' + str(i) + '.jpg'
             # save_path_txt = 'api_usage/temp/test1_' + 'landmark_res' + str(i) + '.txt'
             image_show = image.copy()
             # with open(save_path_txt, "w") as fd:
@@ -73,7 +73,7 @@ def run(image, detect_res, scene):
                 cv2.circle(image_show, (x, y), 2, (255, 0, 0),-1)
                 line = str(x) + ' ' + str(y) + ' '
                 lines.append(line)
-            # cv2.imwrite(save_path_img, image_show)
+            cv2.imwrite(save_path_img, image_show)
     except Exception as e:
         print('Face landmark failed!')
         print(e)
